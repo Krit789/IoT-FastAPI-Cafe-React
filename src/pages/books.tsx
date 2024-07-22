@@ -1,5 +1,6 @@
 import Layout from "../components/layout";
 import cafeBackgroundImage from "../assets/images/bg-cafe-2.jpg";
+import bookPlaceHolder from "../assets/images/cover_placeholder.png";
 import useSWR from "swr";
 import { Book } from "../lib/models";
 import Loading from "../components/loading";
@@ -14,7 +15,7 @@ export default function BooksPage() {
     <>
       <Layout>
         <section
-          className="h-[500px] w-full text-white bg-orange-800 bg-cover bg-blend-multiply flex flex-col justify-center items-center px-4 text-center"
+          className="h-[500px] w-full text-white bg-orange-800 bg-cover bg-blend-multiply flex flex-col justify-center items-center px-4 text-center bg-center"
           style={{
             backgroundImage: `url(${cafeBackgroundImage})`,
           }}
@@ -23,8 +24,8 @@ export default function BooksPage() {
           <h2>รายการหนังสือทั้งหมด</h2>
         </section>
 
-        <section className="container mx-auto py-8">
-          <div className="flex justify-between">
+        <section className="container mx-auto py-8 sm:px-0 px-4">
+          <div className="flex justify-between  items-center pb-4">
             <h1>รายการหนังสือ</h1>
 
             <Button
@@ -50,21 +51,37 @@ export default function BooksPage() {
             </Alert>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {books?.map((book) => (
-              <div className="border border-solid border-neutral-200" key={book.id}>
+              <div
+                className="border border-solid border-neutral-200"
+                key={book.id}
+              >
                 <img
-                  src="https://placehold.co/150x200"
+                  width={242}
+                  height={323}
+                  onError={({ currentTarget }) => {
+                    currentTarget.onerror = null; // prevents looping
+                    currentTarget.src = bookPlaceHolder;
+                  }}
+                  src={book.image ? book.image : bookPlaceHolder}
                   alt={book.title}
-                  className="w-full object-cover aspect-[3/4]"
+                  className="w-full object-contain aspect-[3/4]"
                 />
                 <div className="p-4">
-                  <h2 className="text-lg font-semibold line-clamp-2">{book.title}</h2>
+                  <h2 className="text-lg font-semibold line-clamp-2">
+                    {book.title}
+                  </h2>
                   <p className="text-xs text-neutral-500">โดย {book.author}</p>
                 </div>
 
                 <div className="flex justify-end px-4 pb-2">
-                  <Button component={Link} to={`/books/${book.id}`} size="xs" variant="default">
+                  <Button
+                    component={Link}
+                    to={`/books/${book.id}`}
+                    size="xs"
+                    variant="light"
+                  >
                     ดูรายละเอียด
                   </Button>
                 </div>

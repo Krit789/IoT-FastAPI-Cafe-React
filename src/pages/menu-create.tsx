@@ -18,7 +18,7 @@ import { BookResponse, Category } from "../lib/models";
 import CategoryEditorModal from "../components/category-editor";
 import useSWR from "swr";
 
-export default function BookCreatePage() {
+export default function MenuCreatePage() {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -100,9 +100,8 @@ export default function BookCreatePage() {
     <>
       <Layout>
         <Container>
-        <div className="h-24"></div>
+          <div className="h-24"></div>
           <h1 className="text-xl">เพิ่มหนังสือในระบบ</h1>
-
           <form
             onSubmit={bookCreateForm.onSubmit(handleSubmit)}
             className="space-y-8"

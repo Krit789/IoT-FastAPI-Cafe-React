@@ -1,21 +1,35 @@
-import { Alert, Badge, Button, Container, Divider } from "@mantine/core";
+import {
+  Alert,
+  Badge,
+  Button,
+  Container,
+  Divider,
+  HoverCard,
+  Group,
+  Text,
+} from "@mantine/core";
 import Layout from "../components/layout";
 import { Link, useParams } from "react-router-dom";
-import { Book } from "../lib/models";
+import { Category, SingleBook } from "../lib/models";
 import useSWR from "swr";
 import Loading from "../components/loading";
 import { IconAlertTriangleFilled, IconEdit } from "@tabler/icons-react";
+import bookPlaceHolder from "../assets/images/cover_placeholder.png";
 
 export default function BookByIdPage() {
   const { bookId } = useParams();
 
-  const { data: book, isLoading, error } = useSWR<Book>(`/books/${bookId}`);
+  const {
+    data: book,
+    isLoading,
+    error,
+  } = useSWR<SingleBook>(`/books/${bookId}`);
 
   return (
     <>
       <Layout>
-        <Container className="mt-4">
-          {/* You can use isLoading instead of !book */}
+        <Container>
+        <div className="h-24"></div>
           {isLoading && !error && <Loading />}
           {error && (
             <Alert
@@ -33,35 +47,42 @@ export default function BookByIdPage() {
               <p className="italic text-neutral-500 mb-4">โดย {book.author}</p>
               <div className="grid grid-cols-1 lg:grid-cols-3">
                 <img
-                  src="https://placehold.co/150x200"
+                  onError={({ currentTarget }) => {
+                    currentTarget.onerror = null; // prevents looping
+                    currentTarget.src = bookPlaceHolder;
+                  }}
+                  src={book.image ? book.image : bookPlaceHolder}
                   alt={book.title}
                   className="w-full object-cover aspect-[3/4]"
                 />
                 <div className="col-span-2 px-4 space-y-2 py-4">
                   <h3>รายละเอียดหนังสือ</h3>
                   <p className="indent-4">
-                    {/* TODO: เพิ่มรายละเอียดหนังสือ */}
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, neque.
-                    Necessitatibus nihil quibusdam molestiae, asperiores nesciunt quod aliquid
-                    accusamus iusto sint amet optio laudantium eius, facilis iure ipsa assumenda
-                    alias pariatur! Quis ad ratione amet fugiat, et culpa cupiditate, veritatis
-                    beatae sed voluptatum a reprehenderit id odit quas? Enim, earum?
+                    {book.details ? (
+                      book.details
+                    ) : (
+                      <i className="text-black/50">ไม่มีรายละเอียด</i>
+                    )}
                   </p>
 
                   <h3>เรื่องย่อ</h3>
                   <p className="indent-4">
-                    {/* TODO: เพิ่มเรื่องย่อ */}
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia officiis amet nemo
-                    ut placeat aliquam neque id voluptates quod nihil.
+                    {book.summary ? (
+                      book.summary
+                    ) : (
+                      <i className="text-black/50">ไม่มีเรื่องย่อ</i>
+                    )}
                   </p>
 
                   <h3>หมวดหมู่</h3>
-                  {/* TODO: เพิ่มหมวดหมู่(s) */}
                   <div className="flex flex-wrap gap-2">
-                    <Badge color="teal">#หมวดหมู่ 1</Badge>
-                    <Badge color="teal">#หมวดหมู่ 2</Badge>
-                    <Badge color="teal">#หมวดหมู่ 3</Badge>
-                    <Badge color="teal">#หมวดหมู่ 4</Badge>
+                    {book.categories &&
+                      book.categories.map((tag) => (
+                        <TagHoverCard key={`hover_card_${tag.id}`} tag={tag} />
+                      ))}
+                    {book.categories && !book.categories.length && (
+                      <Badge color="grey">ไม่มี Tag</Badge>
+                    )}
                   </div>
                 </div>
               </div>
@@ -72,7 +93,7 @@ export default function BookByIdPage() {
                 color="blue"
                 size="xs"
                 component={Link}
-                to={`/books/${book.id}/edit`}
+                to={`/books/${bookId}/edit`}
                 className="mt-4"
                 leftSection={<IconEdit />}
               >
@@ -82,6 +103,31 @@ export default function BookByIdPage() {
           )}
         </Container>
       </Layout>
+    </>
+  );
+}
+
+function TagHoverCard({ tag }: { tag: Category }) {
+  return (
+    <>
+      {tag.detail ? (
+        <Group justify="center">
+          <HoverCard width={180} shadow="md">
+            <HoverCard.Target>
+              <Badge color="teal" key={tag.id}>
+                #{tag.name}
+              </Badge>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text size="sm">{tag.detail}</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        </Group>
+      ) : (
+        <Badge color="teal" key={tag.id}>
+          #{tag.name}
+        </Badge>
+      )}
     </>
   );
 }

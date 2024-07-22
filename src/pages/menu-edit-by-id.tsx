@@ -22,7 +22,7 @@ import { notifications } from "@mantine/notifications";
 import { modals } from "@mantine/modals";
 import CategoryEditorModal from "../components/category-editor";
 
-export default function BookEditById() {
+export default function MenuEditById() {
   const { bookId } = useParams();
   const navigate = useNavigate();
 

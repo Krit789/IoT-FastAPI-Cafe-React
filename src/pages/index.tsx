@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <Layout>
       <section
-        className="h-[500px] w-full text-white bg-orange-800 bg-cover bg-blend-multiply flex flex-col justify-center items-center px-4 text-center"
+        className="h-[500px] w-full text-white bg-orange-800 bg-cover bg-blend-multiply flex flex-col justify-center items-center px-4 text-center bg-center"
         style={{
           backgroundImage: `url(${cafeBackgroundImage})`,
         }}
@@ -16,7 +16,7 @@ export default function HomePage() {
         <h2>ร้านกาแฟที่มีหนังสืออยู่นิดหน่อยให้คุณได้อ่าน</h2>
       </section>
 
-      <section className="container mx-auto py-8">
+      <section className="container mx-auto py-8 sm:px-0 px-8">
         <h1>เกี่ยวกับเรา</h1>
 
         <div className="grid grid-cols-3 gap-4">
