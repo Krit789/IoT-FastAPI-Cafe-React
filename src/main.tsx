@@ -17,6 +17,7 @@ import BookCreatePage from "./pages/book-create";
 import MenusPage from "./pages/menus";
 import MenuCreatePage from "./pages/menu-create";
 import MenuEditById from "./pages/menu-edit-by-id";
+import MenuByIdPage from "./pages/menu-by-id";
 
 const theme = createTheme({
   primaryColor: "orange",
@@ -30,13 +31,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/menus",
-    element: <MenusPage />
-  },  {
+    element: <MenusPage />,
+  },
+  {
     path: "/menus/create",
-    element: <MenuCreatePage />
-  },  {
-    path: "/menus/:menuId",
-    element: <MenuEditById />
+    element: <MenuCreatePage />,
+  },
+  {
+    path: "/menus/:menuId/",
+    element: <MenuByIdPage />,
+  },
+  {
+    path: "/menus/:menuId/edit",
+    element: <MenuEditById />,
   },
   {
     path: "/books",
@@ -67,7 +74,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         fetcher: (url: string) =>
           axios
             .get(url, {
-              baseURL: import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api/v1",
+              baseURL:
+                import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api/v1",
             })
             .then((res) => res.data),
       }}

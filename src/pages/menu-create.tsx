@@ -2,72 +2,44 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout";
 import {
   Button,
-  Checkbox,
   Container,
   Divider,
   NumberInput,
   TextInput,
-  Textarea,
-  MultiSelect,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
-import { BookResponse, Category } from "../lib/models";
-import CategoryEditorModal from "../components/category-editor";
-import useSWR from "swr";
+import { BookResponse } from "../lib/models";
 
 export default function MenuCreatePage() {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const bookCreateForm = useForm({
+  const menuCreateForm = useForm({
     initialValues: {
-      title: "",
-      author: "",
-      year: new Date().getUTCFullYear(),
-      is_published: false,
+      name: "",
       image: "",
-      summary: "",
-      details: "",
-      categories: [] as number[],
+      price: 10,
     },
 
     validate: {
-      title: isNotEmpty("กรุณาระบุชื่อหนังสือ"),
-      author: isNotEmpty("กรุณาระบุชื่อผู้แต่ง"),
-      year: isNotEmpty("กรุณาระบุปีที่พิมพ์หนังสือ"),
+      name: isNotEmpty("กรุณาระบุชื่อหนังสือ"),
+      price: isNotEmpty("กรุณาระบุปีที่พิมพ์หนังสือ"),
     },
   });
 
-  const { data: rawCategories, isLoading } = useSWR<Category[]>(`/categories`);
-
-  const [categories, setCategories] = useState<
-    { value: string; label: string }[]
-  >([]);
-
-  useEffect(() => {
-    const processedCategory = rawCategories
-      ? rawCategories?.map((c) => {
-          return { value: c.id.toString(), label: c.name };
-        })
-      : [];
-    setCategories([...processedCategory]);
-  }, [rawCategories]);
-
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-
-  const handleSubmit = async (values: typeof bookCreateForm.values) => {
+  const handleSubmit = async (values: typeof menuCreateForm.values) => {
     try {
       setIsProcessing(true);
-      const response = await axios.post<BookResponse>(`/books`, values);
+      const response = await axios.post<BookResponse>(`/menus`, values);
       notifications.show({
-        title: "เพิ่มข้อมูลหนังสือสำเร็จ",
-        message: "ข้อมูลหนังสือได้รับการเพิ่มเรียบร้อยแล้ว",
+        title: "เพิ่มเมนูสือสำเร็จ",
+        message: "ข้อมูลเมนูได้รับการเพิ่มเรียบร้อยแล้ว",
         color: "teal",
       });
-      navigate(`/books/${response.data.id}`);
+      navigate(`/menus/${response.data.id}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 422) {
@@ -101,66 +73,29 @@ export default function MenuCreatePage() {
       <Layout>
         <Container>
           <div className="h-24"></div>
-          <h1 className="text-xl">เพิ่มหนังสือในระบบ</h1>
+          <h1 className="text-xl">เพิ่มเมนูในระบบ</h1>
           <form
-            onSubmit={bookCreateForm.onSubmit(handleSubmit)}
+            onSubmit={menuCreateForm.onSubmit(handleSubmit)}
             className="space-y-8"
           >
             <TextInput
-              label="ชื่อหนังสือ"
-              placeholder="ชื่อหนังสือ"
-              {...bookCreateForm.getInputProps("title")}
-            />
-
-            <TextInput
-              label="ชื่อผู้แต่ง"
-              placeholder="ชื่อผู้แต่ง"
-              {...bookCreateForm.getInputProps("author")}
+              label="ชื่อเมนู"
+              placeholder="ชื่อเมนู"
+              {...menuCreateForm.getInputProps("name")}
             />
 
             <NumberInput
-              label="ปีที่พิมพ์"
-              placeholder="ปีที่พิมพ์"
-              min={1900}
-              max={new Date().getFullYear() + 1}
-              {...bookCreateForm.getInputProps("year")}
+              label="ราคา"
+              placeholder="ราคา"
+              min={0}
+              {...menuCreateForm.getInputProps("price")}
+            />
+            <TextInput
+              label="URL รูปภาพ"
+              placeholder="https://example.com"
+              {...menuCreateForm.getInputProps("image")}
             />
 
-            <Textarea
-              label="รายละเอียดหนังสือ"
-              placeholder="รายละเอียดหนังสือ"
-              {...bookCreateForm.getInputProps("details")}
-            />
-            <Textarea
-              label="เรื่องย่อ"
-              placeholder="เรื่องย่อ"
-              {...bookCreateForm.getInputProps("summary")}
-            />
-            <div className={`flex sm:items-end gap-2 sm:flex-row flex-col `}>
-              <MultiSelect
-                className="w-full"
-                label="เพิ่มหมวดหมู่"
-                placeholder="หมวดหมู่"
-                data={categories}
-                disabled={isLoading}
-                {...bookCreateForm.getInputProps("categories")}
-              />
-              <div className="flex flex-row">
-                <Button
-                  onClick={() => {
-                    setModalOpen(true);
-                  }}
-                >
-                  แก้ไขหมวดหมู่
-                </Button>
-              </div>
-            </div>
-            <Checkbox
-              label="เผยแพร่"
-              {...bookCreateForm.getInputProps("is_published", {
-                type: "checkbox",
-              })}
-            />
             <Divider />
             <div className="flex sm:items-end gap-2 sm:flex-row flex-col">
               <Button type="submit" loading={isProcessing}>
@@ -168,10 +103,6 @@ export default function MenuCreatePage() {
               </Button>
             </div>
           </form>
-          <CategoryEditorModal
-            setModalOpen={setModalOpen}
-            modalOpen={modalOpen}
-          />
         </Container>
       </Layout>
     </>

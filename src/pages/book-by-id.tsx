@@ -29,7 +29,7 @@ export default function BookByIdPage() {
     <>
       <Layout>
         <Container>
-        <div className="h-24"></div>
+          <div className="h-24"></div>
           {isLoading && !error && <Loading />}
           {error && (
             <Alert
@@ -45,7 +45,7 @@ export default function BookByIdPage() {
             <>
               <h1>{book.title}</h1>
               <p className="italic text-neutral-500 mb-4">โดย {book.author}</p>
-              <div className="grid grid-cols-1 lg:grid-cols-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3">
                 <img
                   onError={({ currentTarget }) => {
                     currentTarget.onerror = null; // prevents looping
@@ -56,6 +56,8 @@ export default function BookByIdPage() {
                   className="w-full object-cover aspect-[3/4]"
                 />
                 <div className="col-span-2 px-4 space-y-2 py-4">
+                  <h3>ปีที่ตีพิมพ์</h3>
+                  <p className="indent-4">{book.year}</p>
                   <h3>รายละเอียดหนังสือ</h3>
                   <p className="indent-4">
                     {book.details ? (

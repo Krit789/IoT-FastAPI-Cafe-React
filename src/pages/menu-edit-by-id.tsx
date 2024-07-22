@@ -1,16 +1,13 @@
 import useSWR from "swr";
-import { Category, SingleBook } from "../lib/models";
+import { MenuResponse } from "../lib/models";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/layout";
 import {
   Alert,
   Button,
-  Checkbox,
   Container,
   Divider,
-  MultiSelect,
   NumberInput,
-  Textarea,
   TextInput,
 } from "@mantine/core";
 import Loading from "../components/loading";
@@ -20,90 +17,58 @@ import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { modals } from "@mantine/modals";
-import CategoryEditorModal from "../components/category-editor";
 
 export default function MenuEditById() {
-  const { bookId } = useParams();
+  const { menuId } = useParams();
   const navigate = useNavigate();
 
   const [isProcessing, setIsProcessing] = useState(false);
 
   const {
-    data: book,
+    data: menu,
     isLoading,
     error,
-  } = useSWR<SingleBook>(`/books/${bookId}`);
-
-  const { data: rawCategories } = useSWR<Category[]>(`/categories`);
-  const [categories, setCategories] = useState<
-    { value: string; label: string }[]
-  >([]);
+  } = useSWR<MenuResponse>(`/menus/${menuId}`);
 
   useEffect(() => {
-    const processedCategory = rawCategories
-      ? rawCategories?.map((c) => {
-          return { value: c.id.toString(), label: c.name };
-        })
-      : [];
-    setCategories([...processedCategory]);
-  }, [rawCategories]);
-
-  useEffect(() => {
-    const processedCategory = book?.categories
-      ? book?.categories?.map((c) => {
-          return c.id.toString();
-        })
-      : [];
     const formValue = {
-      title: book?.title ? book?.title : "",
-      author: book?.author ? book?.author : "",
-      year: book?.year ? book?.year : new Date().getFullYear(),
-      is_published: book?.is_published ? book?.is_published : false,
-      image: book?.image ? book?.image : "",
-      summary: book?.summary ? book?.summary : "",
-      details: book?.details ? book?.details : "",
-      categories: processedCategory ? processedCategory : [],
+      name: menu?.name ? menu?.name : "",
+      image: menu?.image ? menu.image : "",
+      price: menu?.price ? menu.price : 10,
     };
-    bookEditForm.setInitialValues(formValue);
-    bookEditForm.setValues(formValue);
-  }, [book]);
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+    menuEditForm.setInitialValues(formValue);
+    menuEditForm.setValues(formValue);
+  }, [menu]);
 
-  const bookEditForm = useForm({
+  const menuEditForm = useForm({
     initialValues: {
-      title: "",
-      author: "",
-      year: new Date().getFullYear(),
-      is_published: false,
+      name: "",
       image: "",
-      summary: "",
-      details: "",
-      categories: [] as string[],
+      price: 10,
     },
 
     validate: {
-      title: isNotEmpty("กรุณาระบุชื่อหนังสือ"),
-      author: isNotEmpty("กรุณาระบุชื่อผู้แต่ง"),
-      year: isNotEmpty("กรุณาระบุปีที่พิมพ์หนังสือ"),
+      name: isNotEmpty("กรุณาระบุชื่อหนังสือ"),
+      price: isNotEmpty("กรุณาระบุปีที่พิมพ์หนังสือ"),
     },
   });
 
-  const handleSubmit = async (values: typeof bookEditForm.values) => {
+  const handleSubmit = async (values: typeof menuEditForm.values) => {
     try {
       setIsProcessing(true);
-      await axios.patch(`/books/${bookId}`, values);
+      await axios.patch(`/menus/${menuId}`, values);
       notifications.show({
-        title: "แก้ไขข้อมูลหนังสือสำเร็จ",
-        message: "ข้อมูลหนังสือได้รับการแก้ไขเรียบร้อยแล้ว",
+        title: "แก้ไขข้อมูลเมนูสำเร็จ",
+        message: "ข้อมูลเมนูได้รับการแก้ไขเรียบร้อยแล้ว",
         color: "teal",
       });
-      navigate(`/books/${bookId}`);
+      navigate(`/menus/${menuId}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 404) {
           notifications.show({
-            title: "ไม่พบข้อมูลหนังสือ",
-            message: "ไม่พบข้อมูลหนังสือที่ต้องการแก้ไข",
+            title: "ไม่พบข้อมูลเมนู",
+            message: "ไม่พบข้อมูลเมนูที่ต้องการแก้ไข",
             color: "red",
           });
         } else if (error.response?.status === 422) {
@@ -135,13 +100,13 @@ export default function MenuEditById() {
   const handleDelete = async () => {
     try {
       setIsProcessing(true);
-      await axios.delete(`/books/${bookId}`);
+      await axios.delete(`/menus/${menuId}`);
       notifications.show({
-        title: "ลบหนังสือสำเร็จ",
-        message: "ลบหนังสือเล่มนี้ออกจากระบบเรียบร้อยแล้ว",
+        title: "ลบเมนูสำเร็จ",
+        message: "ลบเมนูนี้ออกจากระบบเรียบร้อยแล้ว",
         color: "red",
       });
-      navigate("/books");
+      navigate("/menus");
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 404) {
@@ -174,8 +139,8 @@ export default function MenuEditById() {
     <>
       <Layout>
         <Container>
-        <div className="h-24"></div>
-          <h1 className="text-xl">แก้ไขข้อมูลหนังสือ</h1>
+          <div className="h-24"></div>
+          <h1 className="text-xl">แก้ไขข้อมูลเมนู</h1>
           {isLoading && !error && <Loading />}
           {error && (
             <Alert
@@ -187,84 +152,42 @@ export default function MenuEditById() {
             </Alert>
           )}
 
-          {!!book && (
+          {!!menu && (
             <>
               <form
-                onSubmit={bookEditForm.onSubmit(handleSubmit)}
+                onSubmit={menuEditForm.onSubmit(handleSubmit)}
                 className="space-y-8"
               >
                 <TextInput
-                  label="ชื่อหนังสือ"
-                  placeholder="ชื่อหนังสือ"
-                  {...bookEditForm.getInputProps("title")}
-                />
-
-                <TextInput
-                  label="ชื่อผู้แต่ง"
-                  placeholder="ชื่อผู้แต่ง"
-                  {...bookEditForm.getInputProps("author")}
+                  label="ชื่อเมนู"
+                  placeholder="ชื่อเมนู"
+                  {...menuEditForm.getInputProps("name")}
                 />
 
                 <NumberInput
-                  label="ปีที่พิมพ์"
-                  placeholder="ปีที่พิมพ์"
-                  min={1900}
-                  max={new Date().getFullYear() + 1}
-                  {...bookEditForm.getInputProps("year")}
+                  label="ราคา"
+                  placeholder="ราคา"
+                  min={0}
+                  {...menuEditForm.getInputProps("price")}
                 />
-
-                <Textarea
-                  label="รายละเอียดหนังสือ"
-                  placeholder="รายละเอียดหนังสือ"
-                  {...bookEditForm.getInputProps("details")}
-                />
-                <Textarea
-                  label="เรื่องย่อ"
-                  placeholder="เรื่องย่อ"
-                  {...bookEditForm.getInputProps("summary")}
-                />
-                <div
-                  className={`flex sm:items-end gap-2 sm:flex-row flex-col `}
-                >
-                  <MultiSelect
-                    className="w-full"
-                    label="เพิ่มหมวดหมู่"
-                    placeholder="หมวดหมู่"
-                    data={categories}
-                    disabled={isLoading}
-                    {...bookEditForm.getInputProps("categories")}
-                  />
-                  <div className="flex flex-row">
-                    <Button
-                      onClick={() => {
-                        setModalOpen(true);
-                      }}
-                    >
-                      แก้ไขหมวดหมู่
-                    </Button>
-                  </div>
-                </div>
-
-                <Checkbox
-                  label="เผยแพร่"
-                  {...bookEditForm.getInputProps("is_published", {
-                    type: "checkbox",
-                  })}
+                <TextInput
+                  label="URL รูปภาพ"
+                  placeholder="https://example.com"
+                  {...menuEditForm.getInputProps("image")}
                 />
 
                 <Divider />
-
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2 sm:flex-row flex-col sm:justify-between">
                   <Button
                     color="red"
                     leftSection={<IconTrash />}
                     size="xs"
                     onClick={() => {
                       modals.openConfirmModal({
-                        title: "คุณต้องการลบหนังสือเล่มนี้ใช่หรือไม่",
+                        title: "คุณต้องการลบเมนูนี้ใช่หรือไม่",
                         children: (
                           <span className="text-xs">
-                            เมื่อคุณดำนเนินการลบหนังสือเล่มนี้แล้ว
+                            เมื่อคุณดำนเนินการลบเมนูนี้แล้ว
                             จะไม่สามารถย้อนกลับได้
                           </span>
                         ),
@@ -278,18 +201,13 @@ export default function MenuEditById() {
                       });
                     }}
                   >
-                    ลบหนังสือนี้
+                    ลบเมนูนี้
                   </Button>
-
-                  <Button type="submit" loading={isLoading || isProcessing}>
+                  <Button type="submit" loading={isProcessing}>
                     บันทึกข้อมูล
                   </Button>
                 </div>
               </form>
-              <CategoryEditorModal
-                setModalOpen={setModalOpen}
-                modalOpen={modalOpen}
-              />
             </>
           )}
         </Container>

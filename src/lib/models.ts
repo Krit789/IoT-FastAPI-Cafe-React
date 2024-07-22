@@ -32,6 +32,12 @@ export interface Book {
   id: number;
 }
 
+export interface MenuResponse {
+  name: string;
+  price: number;
+  image: string | null;
+  id: number;
+}
 export interface Menu {
   name: string;
   price: number;

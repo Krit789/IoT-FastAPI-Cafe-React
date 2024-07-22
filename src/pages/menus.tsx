@@ -2,14 +2,14 @@ import Layout from "../components/layout";
 import cafeBackgroundImage from "../assets/images/bg-cafe-3.jpg";
 import menuPlaceHolder from "../assets/images/menu_placeholder.png";
 import useSWR from "swr";
-import { Menu } from "../lib/models";
+import { MenuResponse } from "../lib/models";
 import Loading from "../components/loading";
 import { Alert, Button } from "@mantine/core";
 import { IconAlertTriangleFilled, IconPlus, IconShoppingCart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 export default function MenusPage() {
-  const { data: menus, error } = useSWR<Menu[]>("/menus");
+  const { data: menus, error } = useSWR<MenuResponse[]>("/menus");
 
   return (
     <>
@@ -60,7 +60,7 @@ export default function MenusPage() {
             </Alert>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {menus?.map((menu) => (
               <div
                 className="border border-solid border-neutral-200"

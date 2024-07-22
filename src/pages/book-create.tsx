@@ -119,6 +119,12 @@ export default function BookCreatePage() {
               {...bookCreateForm.getInputProps("author")}
             />
 
+            <TextInput
+              label="URL รูปภาพปก"
+              placeholder="http://example.com"
+              {...bookCreateForm.getInputProps("image")}
+            />
+
             <NumberInput
               label="ปีที่พิมพ์"
               placeholder="ปีที่พิมพ์"

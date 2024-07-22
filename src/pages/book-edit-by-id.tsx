@@ -174,7 +174,7 @@ export default function BookEditById() {
     <>
       <Layout>
         <Container>
-        <div className="h-24"></div>
+          <div className="h-24"></div>
           <h1 className="text-xl">แก้ไขข้อมูลหนังสือ</h1>
           {isLoading && !error && <Loading />}
           {error && (
@@ -203,6 +203,12 @@ export default function BookEditById() {
                   label="ชื่อผู้แต่ง"
                   placeholder="ชื่อผู้แต่ง"
                   {...bookEditForm.getInputProps("author")}
+                />
+
+                <TextInput
+                  label="URL รูปภาพปก"
+                  placeholder="http://example.com"
+                  {...bookEditForm.getInputProps("image")}
                 />
 
                 <NumberInput
