@@ -83,7 +83,7 @@ export default function Layout({ children }: LayoutProps) {
                 setIsAuth({ isAuth: !isAuth.isAuth });
               }}
             >
-              Admin Mode
+              {isAuth.isAuth ? "เข้า Guest Mode" : "เข้า Admin Mode"}
             </Button>
           </div>
           <div className="flex justify-start gap-x-8 bg-white/70 backdrop-blur-md sm:mx-8 sm:mt-4 sm:px-8 sm:py-1 px-4 py-2 sm:rounded-md transition-all">
