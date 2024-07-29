@@ -1,16 +1,16 @@
-import {
-  Alert,
-  Button,
-  Container,
-  Divider,
-} from "@mantine/core";
+import { Alert, Button, Container, Divider } from "@mantine/core";
 import Layout from "../components/layout";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { MenuResponse } from "../lib/models";
 import useSWR from "swr";
 import Loading from "../components/loading";
-import { IconAlertTriangleFilled, IconEdit } from "@tabler/icons-react";
+import {
+  IconAlertTriangleFilled,
+  IconArrowNarrowLeft,
+  IconEdit,
+} from "@tabler/icons-react";
 import menuPlaceHolder from "../assets/images/menu_placeholder.png";
+import { useEffect } from "react";
 
 export default function MenuByIdPage() {
   const { menuId } = useParams();
@@ -20,12 +20,26 @@ export default function MenuByIdPage() {
     isLoading,
     error,
   } = useSWR<MenuResponse>(`/menus/${menuId}`);
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = `${menu?.name ? menu?.name : "Untitled Menu"} | IOT Cafe`;
+  }, [menu]);
 
   return (
     <>
       <Layout>
         <Container>
           <div className="h-24"></div>
+          <Button
+            onClick={() => navigate(-1)}
+            className="mb-2"
+            variant="subtle"
+            leftSection={<IconArrowNarrowLeft />}
+          >
+            ย้อนกลับ
+          </Button>
+
           {isLoading && !error && <Loading />}
           {error && (
             <Alert
@@ -51,9 +65,14 @@ export default function MenuByIdPage() {
                 />
                 <div>
                   <h1>{menu.name}</h1>
-
                   <h3>ราคา</h3>
-                  <span className="text-xl">{menu.price} บาท</span>
+                  <span className="text-xl ml-2">{menu.price} บาท</span>
+                  <h3 className="mt-2">รายละเอียด</h3>
+                  {menu.details ? (
+                    <span className="ml-2">{menu.details}</span>
+                  ) : (
+                    <i className="text-black/50 ml-2">ไม่มีรายละเอียด</i>
+                  )}
                 </div>
               </div>
 

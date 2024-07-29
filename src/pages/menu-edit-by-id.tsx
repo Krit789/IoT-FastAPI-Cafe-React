@@ -8,6 +8,7 @@ import {
   Container,
   Divider,
   NumberInput,
+  Textarea,
   TextInput,
 } from "@mantine/core";
 import Loading from "../components/loading";
@@ -33,6 +34,7 @@ export default function MenuEditById() {
   useEffect(() => {
     const formValue = {
       name: menu?.name ? menu?.name : "",
+      details: menu?.details ? menu.details : "",
       image: menu?.image ? menu.image : "",
       price: menu?.price ? menu.price : 10,
     };
@@ -43,6 +45,7 @@ export default function MenuEditById() {
   const menuEditForm = useForm({
     initialValues: {
       name: "",
+      details: "",
       image: "",
       price: 10,
     },
@@ -169,6 +172,11 @@ export default function MenuEditById() {
                   placeholder="ราคา"
                   min={0}
                   {...menuEditForm.getInputProps("price")}
+                />
+                <Textarea
+                  label="รายละเอียด"
+                  placeholder="มีถั่ว มีชีส มีหมู"
+                  {...menuEditForm.getInputProps("details")}
                 />
                 <TextInput
                   label="URL รูปภาพ"

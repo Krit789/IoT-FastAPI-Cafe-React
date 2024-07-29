@@ -18,6 +18,8 @@ import MenusPage from "./pages/menus";
 import MenuCreatePage from "./pages/menu-create";
 import MenuEditById from "./pages/menu-edit-by-id";
 import MenuByIdPage from "./pages/menu-by-id";
+import OrdersPage from "./pages/orders";
+import OrderByIdPage from "./pages/order-by-id";
 
 const theme = createTheme({
   primaryColor: "orange",
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
     path: "/books/:bookId/edit",
     element: <BookEditById />,
   },
+  {
+    path: "/orders",
+    element: <OrdersPage />
+  },
+  {
+    path: "/orders/:orderId",
+    element: <OrderByIdPage />
+  }
 ]);
 
 if (import.meta.env.VITE_API_URL) {

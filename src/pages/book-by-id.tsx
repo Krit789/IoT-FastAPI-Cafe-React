@@ -9,12 +9,17 @@ import {
   Text,
 } from "@mantine/core";
 import Layout from "../components/layout";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Category, SingleBook } from "../lib/models";
 import useSWR from "swr";
 import Loading from "../components/loading";
-import { IconAlertTriangleFilled, IconEdit } from "@tabler/icons-react";
+import {
+  IconAlertTriangleFilled,
+  IconArrowNarrowLeft,
+  IconEdit,
+} from "@tabler/icons-react";
 import bookPlaceHolder from "../assets/images/cover_placeholder.png";
+import { useEffect } from "react";
 
 export default function BookByIdPage() {
   const { bookId } = useParams();
@@ -24,12 +29,26 @@ export default function BookByIdPage() {
     isLoading,
     error,
   } = useSWR<SingleBook>(`/books/${bookId}`);
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = `${
+      book?.title ? book?.title : "Untitled Book"
+    } | IOT Cafe`;
+  }, [book]);
 
   return (
     <>
       <Layout>
         <Container>
           <div className="h-24"></div>
+          <Button
+            onClick={() => navigate(-1)}
+            variant="subtle"
+            leftSection={<IconArrowNarrowLeft />}
+          >
+            ย้อนกลับ
+          </Button>
           {isLoading && !error && <Loading />}
           {error && (
             <Alert

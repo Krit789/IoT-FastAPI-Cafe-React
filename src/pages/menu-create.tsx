@@ -6,6 +6,7 @@ import {
   Divider,
   NumberInput,
   TextInput,
+  Textarea,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { useState } from "react";
@@ -20,6 +21,7 @@ export default function MenuCreatePage() {
   const menuCreateForm = useForm({
     initialValues: {
       name: "",
+      details: "",
       image: "",
       price: 10,
     },
@@ -89,6 +91,11 @@ export default function MenuCreatePage() {
               placeholder="ราคา"
               min={0}
               {...menuCreateForm.getInputProps("price")}
+            />
+            <Textarea
+              label="รายละเอียด"
+              placeholder="มีถั่ว มีชีส มีหมู"
+              {...menuCreateForm.getInputProps("details")}
             />
             <TextInput
               label="URL รูปภาพ"
