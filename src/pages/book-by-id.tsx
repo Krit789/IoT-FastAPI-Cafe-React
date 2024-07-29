@@ -30,7 +30,6 @@ export default function BookByIdPage() {
     error,
   } = useSWR<SingleBook>(`/books/${bookId}`);
   let navigate = useNavigate();
-
   useEffect(() => {
     document.title = `${
       book?.title ? book?.title : "Untitled Book"
